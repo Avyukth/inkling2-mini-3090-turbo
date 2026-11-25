@@ -1,0 +1,20 @@
+{
+  "benchmark": "tests/spec_bench.py --ignore-eos (1500 completion tokens per prompt, single RTX 3090 sm_86, 131072 BF16 KV)",
+  "model": "Blackfrost-AI/Inkling-2-Mini-Derisked",
+  "baseline_1gpu_128k": {
+    "code_t0.0": {"tok_s": 244.4, "tokens": 1500, "mean_accepted_per_step": 3.51, "tokens_per_step": 4.51, "ms_per_step": 18.43},
+    "explain_t0.0": {"tok_s": 164.9, "tokens": 1500, "mean_accepted_per_step": 2.01, "tokens_per_step": 3.01, "ms_per_step": 18.22},
+    "story_t0.0": {"tok_s": 100.8, "tokens": 1500, "mean_accepted_per_step": 0.78, "tokens_per_step": 1.78, "ms_per_step": 17.66},
+    "code_t0.6": {"tok_s": 219.2, "tokens": 1500, "mean_accepted_per_step": 3.10, "tokens_per_step": 4.10, "ms_per_step": 18.69},
+    "explain_t0.6": {"tok_s": 169.2, "tokens": 1500, "mean_accepted_per_step": 2.17, "tokens_per_step": 3.17, "ms_per_step": 18.70},
+    "story_t0.6": {"tok_s": 117.2, "tokens": 1500, "mean_accepted_per_step": 1.10, "tokens_per_step": 2.10, "ms_per_step": 17.95}
+  },
+  "champion_w8fast_wo_maxseqs8_farattn": {
+    "code_t0.0": {"tok_s": 284.5, "tokens": 1500, "mean_accepted_per_step": 4.03, "tokens_per_step": 5.03, "ms_per_step": 17.64},
+    "explain_t0.0": {"tok_s": 187.1, "tokens": 1500, "mean_accepted_per_step": 2.23, "tokens_per_step": 3.23, "ms_per_step": 17.27},
+    "story_t0.0": {"tok_s": 157.4, "tokens": 1500, "mean_accepted_per_step": 1.65, "tokens_per_step": 2.65, "ms_per_step": 16.81},
+    "code_t0.6": {"tok_s": 258.1, "tokens": 1500, "mean_accepted_per_step": 3.58, "tokens_per_step": 4.58, "ms_per_step": 17.72},
+    "explain_t0.6": {"tok_s": 201.6, "tokens": 1500, "mean_accepted_per_step": 2.58, "tokens_per_step": 3.58, "ms_per_step": 17.68},
+    "story_t0.6": {"tok_s": 124.7, "tokens": 1500, "mean_accepted_per_step": 1.12, "tokens_per_step": 2.12, "ms_per_step": 16.98}
+  }
+}

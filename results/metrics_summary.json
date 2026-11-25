@@ -1,0 +1,46 @@
+{
+  "hardware": {
+    "gpu": "1x NVIDIA GeForce RTX 3090 (sm_86, 82 SMs, 24 GB GDDR6X)",
+    "measured_d2d_bandwidth_gbs": 836.5,
+    "measured_bf16_gemm_4096_tflops": 65.2,
+    "power_limit_w": 350
+  },
+  "pinned_artifacts": {
+    "vllm_image": "vllm/vllm-openai@sha256:c2dc759f5984f69c1e2418c6af7c26eb756f5ed2a8934c768ae1253645d1449e",
+    "upstream_recipe": "https://github.com/lulakien/inkling2-mini-3090-recipe",
+    "upstream_commit": "75761b0eaaf2a80aeb76ffa9dff0768300236e2a",
+    "model_tested": "Blackfrost-AI/Inkling-2-Mini-Derisked",
+    "max_model_len": 131072,
+    "kv_cache_dtype": "bfloat16"
+  },
+  "tuned_environment": {
+    "PROFILE": "128k",
+    "FAR_ATTN": "1",
+    "MAXSEQS": "8",
+    "W8": "attn,wo,head,markov,draft",
+    "VLLM_W8_FAST": "1"
+  },
+  "cuda_graphed_kernel_microbenchmarks_us": {
+    "qkvr_c1_x48": {"shape": [8, 5632, 2304], "stock_us": 24.4, "turbo_us": 18.7, "saved_ms_per_step": 0.27},
+    "qkvr_c4_x48": {"shape": [12, 5632, 2304], "stock_us": 25.5, "turbo_us": 18.3, "saved_ms_per_step": 0.34},
+    "wo_ud_c1_x48": {"shape": [8, 2304, 3072], "stock_bf16_us": 22.9, "turbo_w8_us": 11.1, "saved_ms_per_step": 0.57, "vram_freed_mib": 170},
+    "markov_x7": {"shape": [1, 201088, 256], "stock_us": 68.5, "turbo_us": 62.9, "saved_ms_per_step": 0.04, "bandwidth_gbs": 825.0},
+    "draft_qkv_o_x3": {"stock_us": 36.7, "turbo_us": 27.2, "saved_ms_per_step": 0.03},
+    "total_predicted_step_savings_ms": 0.91
+  },
+  "end_to_end_improvements": {
+    "spec_bench_1500tok_avg_ms_per_step": {"baseline": 18.28, "turbo": 17.35, "delta_ms": -0.93, "delta_pct": -5.1},
+    "code_decode_t0_tok_s": {"baseline": 244.4, "turbo": 284.5, "delta_pct": 16.4},
+    "explain_decode_t0_tok_s": {"baseline": 164.9, "turbo": 187.1, "delta_pct": 13.5},
+    "code_decode_t06_tok_s": {"baseline": 219.2, "turbo": 258.1, "delta_pct": 17.7},
+    "explain_decode_t06_tok_s": {"baseline": 169.2, "turbo": 201.6, "delta_pct": 19.1},
+    "c1_median_6prompt_t06_tok_s": {"baseline": 132.0, "turbo_run1": 148.41, "turbo_run2": 148.62, "delta_pct": 12.5},
+    "c4_aggregate_t06_tok_s": {"baseline": 292.0, "turbo_range": [301.32, 313.85]},
+    "c8_fixed_256t_aggregate_tok_s": {"baseline": 354.3, "config_only": 464.86, "turbo": 533.13, "delta_pct": 50.5},
+    "c8_cold_210t_avg_ttft_ms": {"baseline": 1232.0, "config_only": 914.8, "turbo": 504.2, "delta_pct": -59.1},
+    "paired_32prompt_t0_median_ms_per_step": {"baseline": 18.00, "turbo": 17.12, "wins": 32, "losses": 0},
+    "paired_32prompt_t0_mean_tok_s": {"baseline": 169.36, "turbo": 180.77, "delta_pct": 6.7},
+    "long_context_51233tok_needle": {"retrieval": "3/3", "prefill_tok_s": 3851.3, "ttft_s": 13.3, "decode_tok_s": 234.17},
+    "accuracy_20task_check": {"baseline": "20/20", "turbo": "20/20"}
+  }
+}
