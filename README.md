@@ -84,7 +84,7 @@ Measured with [`scripts/practical_bench.py`](scripts/practical_bench.py) ([`resu
 | **Multi-Turn `64K` Agent Loop** | ~`102 s` cold; single-slot prompt cache | ~`27.2 s` cold (`2,361 tok/s`) | `17.73 s` cold → **`609 ms` Turns 2–4 (`29.1×` speedup)**; **`750 ms` at `100K` (`40.8×`)** |
 | **2 Branched Subagents (`64K` / `100K` shared repo)** | Serialized (re-evaluates / queues) | Serialized (`batch=1` static graph) | **`652 ms` @ `64K` / `807 ms` @ `100K`** *(concurrent paged prefix-cache hit)* |
 | **8 Concurrent Streams (`c=8`)** | Queues / severe slowdown | Serialized (`batch=1`) | **`533.1 tok/s` aggregate (`504 ms` avg TTFT)** |
-| **Prefill–Decode Interference** | Blocks active stream | Blocks until Request 1 finishes | Stream A keeps **`75.9 tok/s`** while Stream B cold-prefills `32K` in `8.44 s` *(tunable via `LPT=512`)* |
+| **Prefill–Decode Interference** | Blocks active stream | Blocks until Request 1 finishes | With `LPT=512` (default): Stream A keeps **`35.3 tok/s`** during B's `32K` cold prefill (`19.5` with `LPT` off; `LPT=256` cuts max gap to `1.88 s`) |
 | **`100K` 3-Hop Codebase Synthesis** | >`160 s` wall time | Untested (passkey / GSM8K reported) | **Exact (`270 == 270`) across `10% / 50% / 90%` modules in `33.57 s` total** |
 | **Tool & Schema Fidelity (`4` checks)** | Template-dependent | Custom engine | **`4/4` PASS** *(escaped AST `edit_file`, 3-way parallel tools, bug-fix round-trip, strict JSON schema)* |
 | **Time-to-Verified-Code (`3` algos, `exec()` tested)** | ~`6–8 s` / task | **Working thinking-off toggle** | **`3/3` PASS in `1.70 s` avg (`effort=low`)** *(note: upstream template treats `effort=none` as default thinking)* |

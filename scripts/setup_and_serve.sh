@@ -50,6 +50,7 @@ fi
 export MODEL_DIR SERVED_NAME NAME PORT PROFILE GPU
 export FAR_ATTN="${FAR_ATTN:-1}"
 export MAXSEQS="${MAXSEQS:-8}"
+export LPT="${LPT:-512}"
 export W8="${W8:-attn,wo,head,markov,draft}"
 export DOCKER_EXTRA="-e VLLM_W8_FAST=${VLLM_W8_FAST:-1} ${EXTRA_PORT} ${RESTART_POLICY} ${DOCKER_EXTRA:-}"
 

@@ -48,9 +48,26 @@
     "agent_a_solo_decode_tps": 262.1,
     "agent_a_solo_max_itl_ms": 279.6,
     "agent_b_cold_prompt_tokens": 32167,
-    "agent_b_ttft_s": 8.44,
-    "agent_a_overall_decode_tps_with_b": 75.9,
-    "agent_a_max_inter_token_stall_ms": 3896.9
+    "lpt_sweep_during_32k_prefill": {
+      "LPT_off": {
+        "solo_32k_ttft_s": 8.01,
+        "during_prefill_stream_a_tps": 19.5,
+        "max_gap_ms": 3857.3,
+        "concurrent_b_32k_ttft_s": 8.32
+      },
+      "LPT_512_default": {
+        "solo_32k_ttft_s": 8.17,
+        "during_prefill_stream_a_tps": 35.3,
+        "max_gap_ms": 2759.6,
+        "concurrent_b_32k_ttft_s": 10.77
+      },
+      "LPT_256": {
+        "solo_32k_ttft_s": 8.19,
+        "during_prefill_stream_a_tps": 35.6,
+        "max_gap_ms": 1878.1,
+        "concurrent_b_32k_ttft_s": 14.59
+      }
+    }
   },
   "5_100k_3hop_codebase_reasoning": {
     "prompt_tokens": 100142,
