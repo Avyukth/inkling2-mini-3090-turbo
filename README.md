@@ -71,6 +71,24 @@ Even after porting Inkling-2-Mini's Hopper/Blackwell `vllm/vllm-openai:inkling-2
 | **`draft_qkv` + `draft_o` (`×3`)** | `(8, 5120/2304, ...)` | `22.2 + 14.5 µs` (`0.11 ms`) | **`16.4 + 10.8 µs`** (`726 / 662 GB/s`, `0.08 ms`) | **`-0.03 ms`** |
 | **Total Predicted Savings** | | | | **`-0.91 ms / step`** |
 
+### 4. Real-World Agentic Practicality & Cross-Engine Comparison (`1× RTX 3090`)
+
+Measured with [`scripts/practical_bench.py`](scripts/practical_bench.py) ([`results/practical_bench.json`](results/practical_bench.json)) and compared against published single-RTX 3090 figures for `llama.cpp` and `maya-ik2` (`UD-Q4_K_XL`, FP8 KV, single-stream):
+
+| Practical Dimension | `llama.cpp` (GGUF) | `maya-ik2` (`UD-Q4_K_XL`, FP8 KV, no MTP) | **This Recipe (`vLLM` + Turbo Patches, Native NVFP4, BF16 KV + DSpark)** |
+|---|---|---|---|
+| **Weight & KV Fidelity** | Re-quantized GGUF | Re-quantized `UD-Q4_K_XL` + FP8 KV | **Original native NVFP4 bytes + lossless BF16 KV** *(zero double-quant)* |
+| **Decode: Short / 4K / 64K / 124K** | `57.0` / — / `42.7` / — `tok/s` | `129.5` / `124.2` / `105.6` / `90.6 tok/s` | **Prose:** `141.9–187.1` / `132.5` / `115.7` / `95.8 tok/s`<br>**Code:** **`233.4–284.5` / `180.0` / `154.9` / `132.4 tok/s`** |
+| **Cold Prefill: 4K / 64K / 124K** | `1,052` / `630` / — `tok/s` | `2,742` / `2,361` / `2,079 tok/s` | **`4,319–4,396` / `3,632` / `3,036 tok/s`** *(+46% to +58% faster)* |
+| **Max Single-Card Context** | OOM `< 128K` | **`344K`** *(FP8 KV, CPU vision, no MTP)* | `131,072` *(BF16 KV)* / `262,144` *(via `PROFILE=262k` FP8 KV)* |
+| **Multi-Turn `64K` Agent Loop** | ~`102 s` cold; single-slot prompt cache | ~`27.2 s` cold (`2,361 tok/s`) | `17.73 s` cold → **`609 ms` Turns 2–4 (`29.1×` speedup)**; **`750 ms` at `100K` (`40.8×`)** |
+| **2 Branched Subagents (`64K` / `100K` shared repo)** | Serialized (re-evaluates / queues) | Serialized (`batch=1` static graph) | **`652 ms` @ `64K` / `807 ms` @ `100K`** *(concurrent paged prefix-cache hit)* |
+| **8 Concurrent Streams (`c=8`)** | Queues / severe slowdown | Serialized (`batch=1`) | **`533.1 tok/s` aggregate (`504 ms` avg TTFT)** |
+| **Prefill–Decode Interference** | Blocks active stream | Blocks until Request 1 finishes | Stream A keeps **`75.9 tok/s`** while Stream B cold-prefills `32K` in `8.44 s` *(tunable via `LPT=512`)* |
+| **`100K` 3-Hop Codebase Synthesis** | >`160 s` wall time | Untested (passkey / GSM8K reported) | **Exact (`270 == 270`) across `10% / 50% / 90%` modules in `33.57 s` total** |
+| **Tool & Schema Fidelity (`4` checks)** | Template-dependent | Custom engine | **`4/4` PASS** *(escaped AST `edit_file`, 3-way parallel tools, bug-fix round-trip, strict JSON schema)* |
+| **Time-to-Verified-Code (`3` algos, `exec()` tested)** | ~`6–8 s` / task | **Working thinking-off toggle** | **`3/3` PASS in `1.70 s` avg (`effort=low`)** *(note: upstream template treats `effort=none` as default thinking)* |
+
 ---
 
 ## Architecture Overview
@@ -176,6 +194,9 @@ bash scripts/run_isomorphism_check.sh
 
 # 2. Single-stream step-time + multi-request TTFT & throughput benchmark
 python3 scripts/benchmark.py
+
+# 3. 6-part real-world agentic practicality suite (prefix cache, tools, interference, 100K 3-hop, solve time)
+python3 scripts/practical_bench.py
 ```
 
 ---
@@ -203,9 +224,11 @@ scripts/
   run_isomorphism_check.sh   # Runs numerical equivalence test inside the pinned vLLM container
   verify_isomorphism.py      # Verifies max_abs_diff <= 1 BF16 ULP across all 6 target GEMM shapes
   benchmark.py               # Measures single-stream ms/step, decode tok/s, and c=1/2/4/8 TTFT & throughput
+  practical_bench.py         # 6-part real-world agentic benchmark (multi-turn cache, tools, interference, 100K 3-hop)
 results/
   spec_bench_comparison.json # Before vs. After spec_bench.py (1,500 tok, --ignore-eos)
   metrics_summary.json       # Structured summary of single-stream, concurrency, and kernel microbenchmark metrics
+  practical_bench.json       # Measured outputs of the 6-part real-world practicality suite
 ```
 
 ---

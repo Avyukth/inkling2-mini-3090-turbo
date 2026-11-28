@@ -1,0 +1,84 @@
+{
+  "1_idle_vs_warm_ttft": {
+    "first_request_ttft_ms": 105.9,
+    "warm_short_ttft_ms": 94.3
+  },
+  "2_agentic_multiturn_64k": {
+    "context_tokens": 64301,
+    "turn1_cold_ttft_s": 17.73,
+    "turns_2_to_4_cached_ttft_ms": [
+      618.6,
+      556.0,
+      653.7
+    ],
+    "turns_2_to_4_avg_ttft_ms": 609.4,
+    "turns_2_to_4_cached_tokens": [
+      64256,
+      64768,
+      65280
+    ],
+    "speedup_factor_vs_cold": 29.1,
+    "two_branched_subagents_avg_ttft_ms": 652.2,
+    "two_branched_subagents_cached_tokens": [
+      64256,
+      64256
+    ]
+  },
+  "2b_agentic_multiturn_100k": {
+    "context_tokens": 100002,
+    "turn1_cold_ttft_s": 30.56,
+    "turns_2_to_4_avg_ttft_ms": 749.8,
+    "speedup_factor_vs_cold": 40.8,
+    "two_branched_subagents_avg_ttft_ms": 807.3,
+    "two_branched_subagents_cached_tokens": [
+      99968,
+      99968
+    ]
+  },
+  "3_tool_and_schema_fidelity": {
+    "passed": "4/4",
+    "checks": {
+      "escaped_code_edit_ast_valid": true,
+      "parallel_3_tool_calls": true,
+      "multiturn_tool_roundtrip_fix": true,
+      "strict_json_schema": true
+    }
+  },
+  "4_prefill_decode_interference": {
+    "agent_a_solo_decode_tps": 262.1,
+    "agent_a_solo_max_itl_ms": 279.6,
+    "agent_b_cold_prompt_tokens": 32167,
+    "agent_b_ttft_s": 8.44,
+    "agent_a_overall_decode_tps_with_b": 75.9,
+    "agent_a_max_inter_token_stall_ms": 3896.9
+  },
+  "5_100k_3hop_codebase_reasoning": {
+    "prompt_tokens": 100142,
+    "expected": 270,
+    "answer": "270",
+    "exact_match": true,
+    "reasoning_tokens": 574,
+    "total_wall_s": 33.57
+  },
+  "6_reasoning_effort_and_solve_time": {
+    "none": {
+      "unit_tests_passed": "3/3",
+      "avg_wall_s_per_task": 2.2,
+      "avg_completion_tokens": 542.3,
+      "avg_reasoning_tokens": 352.0,
+      "note": "Upstream Inkling chat template treats 'none' as default medium; use 'low' for fastest built-in mode"
+    },
+    "low": {
+      "unit_tests_passed": "3/3",
+      "avg_wall_s_per_task": 1.7,
+      "avg_completion_tokens": 360.0,
+      "avg_reasoning_tokens": 205.7
+    },
+    "medium": {
+      "unit_tests_passed": "3/3",
+      "avg_wall_s_per_task": 2.84,
+      "avg_completion_tokens": 643.7,
+      "avg_reasoning_tokens": 464.7
+    }
+  }
+}
